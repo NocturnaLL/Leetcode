@@ -1,0 +1,16 @@
+# Ignore executable files
+*.exe
+
+# Ignore object files
+*.o
+
+# Ignore other temporary files and build outputs
+*.out
+*.obj
+*.log
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore other specific files or folders
+pool.exe
