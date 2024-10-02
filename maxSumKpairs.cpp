@@ -189,3 +189,65 @@ int maxOperations(int* nums, int numsSize, int k){
     free(map);
     return numOps;
 }
+
+
+typedef struct {
+    int key;
+    int value;
+} HashNode;
+
+#define HASH_TABLE_SIZE 100003  // Use a prime number for better distribution
+
+int hashFunction(int key) {
+    return abs(key) % HASH_TABLE_SIZE;
+}
+
+int findValue(HashNode* hashTable, int key) {
+    int index = hashFunction(key);
+    while (hashTable[index].key != INT_MIN) {
+        if (hashTable[index].key == key) {
+            return hashTable[index].value;
+        }
+        index = (index + 1) % HASH_TABLE_SIZE;
+    }
+    return 0;
+}
+
+void insertValue(HashNode* hashTable, int key, int value) {
+    int index = hashFunction(key);
+    while (hashTable[index].key != INT_MIN) {
+        if (hashTable[index].key == key) {
+            hashTable[index].value += value;
+            return;
+        }
+        index = (index + 1) % HASH_TABLE_SIZE;
+    }
+    hashTable[index].key = key;
+    hashTable[index].value = value;
+}
+
+int maxOperations(int* nums, int numsSize, int k) {
+    HashNode* hashTable = (HashNode*)malloc(HASH_TABLE_SIZE * sizeof(HashNode));
+    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+        hashTable[i].key = INT_MIN;  // INT_MIN represents an empty slot
+        hashTable[i].value = 0;
+    }
+
+    int countOps = 0;
+    for (int i = 0; i < numsSize; i++) {
+        int num = nums[i];
+        int complement = k - num;
+
+        if (findValue(hashTable, complement) > 0) {
+            // If complement exists, form a pair
+            insertValue(hashTable, complement, -1);
+            countOps++;
+        } else {
+            // Otherwise, insert num into hash table
+            insertValue(hashTable, num, 1);
+        }
+    }
+
+    free(hashTable);
+    return countOps;
+}
