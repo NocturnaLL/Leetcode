@@ -1,5 +1,7 @@
 #include <unordered_map>
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 
@@ -106,3 +108,52 @@ int main() {
     Solution1 sol1;
     int result1 = sol1.maxOperations(nums1, k1);
     printf
+
+
+
+int maxOperations(int* nums, int numsSize, int k) {
+    int maxValue = 100000; // A reasonable limit based on constraints
+    int* count = (int*)calloc(maxValue, sizeof(int));
+    int countOp = 0;
+
+    // Count occurrences of each element using pointer arithmetic
+    for (int i = 0; i < numsSize; i++) {
+        *(count + *(nums + i)) += 1; // Equivalent to count[nums[i]]++
+    }
+
+    // Find pairs that sum up to k
+    for (int i = 0; i < numsSize; i++) {
+        int num = *(nums + i);
+        int diff = k - num;
+
+        // Check if both num and its complement are available
+        if (diff >= 0 && *(count + num) > 0 && *(count + diff) > 0) {
+            if (num == diff) {
+                // If num and diff are the same, ensure there are at least two instances
+                if (*(count + num) >= 2) {
+                    *(count + num) -= 2; // Equivalent to count[num] -= 2
+                    countOp++;
+                }
+            } else {
+                // If num and diff are different
+                *(count + num) -= 1;   // Equivalent to count[num]--
+                *(count + diff) -= 1;  // Equivalent to count[diff]--
+                countOp++;
+            }
+        }
+    }
+
+    free(count); // Free allocated memory
+    return countOp;
+}
+
+int main() {
+    int nums[] = {3, 1, 3, 4, 3};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int k = 6;
+
+    int result = maxOperations(nums, numsSize, k);
+    printf("Maximum number of operations: %d\n", result);
+
+    return 0;
+}
