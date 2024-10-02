@@ -157,3 +157,35 @@ int main() {
 
     return 0;
 }
+
+
+int maxOperations(int* nums, int numsSize, int k){
+    int nums_length = 1000000;
+    int* map = (int *) calloc(nums_length, sizeof(int));
+    int* temp = map;
+    int numOps=0;
+    if(map==NULL)
+        return 0;
+    
+    for(int i=0;i<numsSize;i++){
+        *(temp + *(nums+i)) += 1;
+    }
+    for(int i=0;i<numsSize;i++){
+        int diff = k - *(nums+i);
+        if(diff>0 && *(map+diff)>=1 && (*(map+(*(nums+i)))>=1)){
+            if(diff == *(nums+i)){
+                if(*(map+diff)>=2){
+                    *(map+diff) -=2;
+                    numOps+=1;
+                }
+            }
+            else{
+                *(map+diff) -=1;
+                *(map+(*(nums+i))) -=1;
+                numOps+=1;
+            }
+        }
+    }
+    free(map);
+    return numOps;
+}
